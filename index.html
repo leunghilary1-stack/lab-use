@@ -9,36 +9,27 @@
             --bg: #000000; --card-bg: #111; --text: #ffffff; --border: #333; --input-bg: #222;
             --ios-blue: #007aff; --ios-green: #34c759; --ios-red: #ff3b30;
         }
-        /* Light Mode Classes */
         body.light-mode { 
             --bg: #f2f2f7; --card-bg: #ffffff; --text: #000000; --border: #ddd; --input-bg: #f9f9f9;
         }
-
-        body { font-family: -apple-system, sans-serif; background: var(--bg); color: var(--text); margin: 0; padding-bottom: 90px; transition: background 0.3s; }
         
+        body { font-family: -apple-system, sans-serif; background: var(--bg); color: var(--text); margin: 0; padding-bottom: 90px; transition: background 0.3s; }
         .header { 
             background: var(--card-bg); padding: 20px 15px 10px; border-bottom: 1px solid var(--border); 
             display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; z-index: 10; 
         }
         h1 { margin: 0; font-size: 1.2em; }
 
-        /* Toggle Button */
-        .theme-toggle { background: var(--ios-blue); color: white; border: none; padding: 6px 12px; border-radius: 15px; font-size: 12px; font-weight: bold; }
+        .theme-toggle { background: var(--ios-blue); color: white; border: none; padding: 6px 12px; border-radius: 15px; font-size: 12px; font-weight: bold; cursor: pointer; }
 
         .tab-content { display: none; padding: 10px; }
         .tab-content.active { display: block; }
 
         .card { background: var(--card-bg); padding: 15px; border-radius: 12px; margin-bottom: 10px; border: 1px solid var(--border); }
-        input { width: 100%; padding: 10px; margin: 5px 0; border: 1px solid var(--border); border-radius: 8px; background: var(--input-bg); color: var(--text); font-size: 16px; }
+        input { width: 100%; padding: 10px; margin: 5px 0; border: 1px solid var(--border); border-radius: 8px; background: var(--input-bg); color: var(--text); font-size: 16px; box-sizing: border-box; }
 
-        /* --- COMPACT GRID --- */
-        .custom-grid { 
-            display: grid; 
-            grid-template-columns: repeat(4, 1fr); 
-            grid-template-rows: repeat(4, auto); /* Auto-height rows to remove gaps */
-            gap: 8px; /* Reduced gap */
-            align-items: center;
-        }
+        /* Grid */
+        .custom-grid { display: grid; grid-template-columns: repeat(4, 1fr); grid-template-rows: repeat(4, auto); gap: 8px; align-items: center; }
         
         .cell-btn { 
             padding: 10px 2px; border: none; font-weight: bold; color: white; font-size: 10px; text-transform: uppercase; 
@@ -58,18 +49,15 @@
         .pos-mono { grid-area: 3 / 1; } .pos-lym { grid-area: 3 / 2; } .pos-neu { grid-area: 3 / 3; } .pos-band { grid-area: 3 / 4 / span 2 / 4; }
         .pos-blast { grid-area: 4 / 1 / 4 / span 2; } .pos-atyly { grid-area: 4 / 3; }
 
-        /* Colors */
+        /* Colors (Scientific Grouping) */
         .c-neu { background: #22e0f5; } .c-mon { background: #207327; } .c-imm { background: #0e1ab5; } .c-eos { background: #c24e00 }
         .c-blast { background: #6e4a1d; } .c-other { background: #ff8c00; } .c-nr { background: #56de49;} .c-lym { background: #b019b5;} .c-bas { background: #6300ed;}
 
-        /* Timer Styling */
-        .timer-row { border-bottom: 1px solid #333; padding: 10px 0; }
-        .timer-row:last-child { border: none; }
+        /* Timer */
+        .timer-row { border-bottom: 1px solid var(--border); padding: 10px 0; }
         .timer-controls { display: flex; gap: 8px; align-items: center; margin-top: 5px; }
-        .timer-name { font-weight: bold; border: none; padding: 5px; background: #222; width: 60%; color: white; }
+        .timer-name { font-weight: bold; border: none; padding: 5px; background: var(--input-bg); width: 60%; color: var(--text); border-radius: 4px; }
         .timer-display { font-family: monospace; font-size: 1.2em; font-weight: bold; min-width: 60px; color: var(--ios-green); }
-        .btn-start { background: var(--ios-green); color: white; border: none; border-radius: 5px; padding: 8px 12px; }
-        .btn-stop { background: var(--ios-red); color: white; border: none; border-radius: 5px; padding: 8px 12px; }
         
         /* Tab Bar */
         .tab-bar { position: fixed; bottom: 0; width: 100%; background: var(--card-bg); border-top: 1px solid var(--border); display: flex; justify-content: space-around; padding: 10px 0 25px; }
@@ -77,8 +65,9 @@
         .tab-item.active { color: var(--ios-blue); }
         .tab-icon { font-size: 20px; margin-bottom: 2px; }
 
-        .summary { font-size: 0.8em; margin-top: 10px; column-count: 2; line-height: 1.4; color: var(--text); }
-        .btn-reset { width:100%; background: var(--ios-red); color:white; border:none; padding:10px; border-radius:8px; margin-top:10px; font-weight:bold; }
+        .summary { font-size: 0.85em; margin-top: 10px; column-count: 2; line-height: 1.4; color: var(--text); }
+        .btn-reset { width:100%; background: var(--ios-red); color:white; border:none; padding:12px; border-radius:8px; margin-top:15px; font-weight:bold; }
+        .result-box { background: var(--input-bg); padding: 12px; border-radius: 10px; margin-top: 10px; border: 1px solid var(--border); }
     </style>
 </head>
 <body class="dark-mode">
@@ -122,15 +111,15 @@
     <div id="tab-dilution" class="tab-content">
         <div class="card">
             <h2>Dilution Calculation</h2>
-            <label style="font-size: 0.8em; color: #666;">Stock Concentration (C1)</label>
+            <label style="font-size: 0.8em; opacity: 0.7;">Stock Concentration (C1)</label>
             <input type="number" id="c1" placeholder="C1" oninput="calc()">
-            <label style="font-size: 0.8em; color: #666;">Target Concentration (C2)</label>
+            <label style="font-size: 0.8em; opacity: 0.7;">Target Concentration (C2)</label>
             <input type="number" id="c2" placeholder="C2" oninput="calc()">
-            <label style="font-size: 0.8em; color: #666;">Final Volume (V2)</label>
+            <label style="font-size: 0.8em; opacity: 0.7;">Final Volume (V2)</label>
             <input type="number" id="v2" placeholder="V2" oninput="calc()">
             <div class="result-box">
-                Required Stock: <span id="v1" style="font-weight:bold;">0.00</span><br>
-                Diluent to add: <span id="diluent" style="font-weight:bold;">0.00</span>
+                Required Stock: <span id="v1_res" style="font-weight:bold; color:var(--ios-blue);">0.00</span><br>
+                Diluent to add: <span id="dil_res" style="font-weight:bold; color:var(--ios-blue);">0.00</span>
             </div>
         </div>
     </div>
@@ -138,8 +127,7 @@
     <div id="tab-timers" class="tab-content">
         <div class="card">
             <h2>Lab Timers</h2>
-            <div id="timer-container">
-                </div>
+            <div id="timer-container"></div>
         </div>
     </div>
 
@@ -159,23 +147,22 @@
             document.querySelectorAll('.tab-item').forEach(b => b.classList.remove('active'));
             document.getElementById('tab-' + tabId).classList.add('active');
             btn.classList.add('active');
-            document.getElementById('page-title').innerText = btn.innerText.replace('🔬','').replace('🧪','').replace('⏱️','');
+            document.getElementById('page-title').innerText = btn.innerText.replace(/[🔬🧪⏱️]/g, '');
         }
 
-// --- TIMER LOGIC ---
-        const timerContainer = document.getElementById('timer-container');
-        let timers = [null, null, null, null, null];
+        // Timer Setup
+        const container = document.getElementById('timer-container');
         let timerIntervals = [null, null, null, null, null];
 
         for (let i = 0; i < 5; i++) {
-            timerContainer.innerHTML += `
+            container.innerHTML += `
                 <div class="timer-row">
-                    <input type="text" class="timer-name" placeholder="Timer ${i+1} (e.g. Gram Stain)">
+                    <input type="text" class="timer-name" placeholder="Timer ${i+1}">
                     <div class="timer-controls">
                         <input type="number" id="time-input-${i}" placeholder="Sec" style="width: 70px; margin: 0;">
                         <span class="timer-display" id="display-${i}">00:00</span>
-                        <button class="btn-start" onclick="startTimer(${i})">▶</button>
-                        <button class="btn-stop" onclick="stopTimer(${i})">⏹</button>
+                        <button class="btn-start" style="background:var(--ios-green); color:white; border:none; padding:8px; border-radius:5px;" onclick="startTimer(${i})">▶</button>
+                        <button class="btn-stop" style="background:var(--ios-red); color:white; border:none; padding:8px; border-radius:5px;" onclick="stopTimer(${i})">⏹</button>
                     </div>
                 </div>`;
         }
@@ -190,11 +177,10 @@
                 let m = Math.floor(seconds / 60);
                 let s = seconds % 60;
                 document.getElementById(`display-${i}`).innerText = `${m}:${s < 10 ? '0'+s : s}`;
-                
                 if (seconds <= 0) {
                     clearInterval(timerIntervals[i]);
                     timerIntervals[i] = null;
-                    alert(`Timer "${document.querySelectorAll('.timer-name')[i].value || 'Timer '+(i+1)}" finished!`);
+                    alert("Timer Finished!");
                     if (window.navigator.vibrate) window.navigator.vibrate([200, 100, 200]);
                 }
             }, 1000);
@@ -205,8 +191,8 @@
             timerIntervals[i] = null;
             document.getElementById(`display-${i}`).innerText = "00:00";
         }
-        
-// --- COUNTER & CALC LOGIC ---        
+
+        // Counter Logic
         const cellTypes = ['neu', 'lym', 'mon', 'eos', 'bas', 'aly', 'met', 'mye', 'pro', 'bla', 'oc', 'nrb', 'band'];
         let counts = {}; cellTypes.forEach(t => counts[t] = 0);
         let wbcTotal = 0; let goal = 100;
@@ -234,14 +220,29 @@
                     html += `<div>${t.toUpperCase()}: ${pct}%</div>`;
                 }
             });
-            if (counts['nrb'] > 0) html += `<div style="color:var(--ios-green); font-weight:bold; grid-column:span 2;">NRBC: ${counts['nrb']} per ${wbcTotal} WBC</div>`;
+            if (counts['nrb'] > 0) html += `<div style="color:var(--ios-green); font-weight:bold; grid-column:span 2; margin-top:5px; border-top: 1px solid var(--border);">NRBC: ${counts['nrb']} per ${wbcTotal} WBC</div>`;
             document.getElementById('summary').innerHTML = html;
         }
 
+        function calc() {
+            const c1 = parseFloat(document.getElementById('c1').value) || 0;
+            const c2 = parseFloat(document.getElementById('c2').value) || 0;
+            const v2 = parseFloat(document.getElementById('v2').value) || 0;
+            if (c1 > 0) {
+                const v1 = (c2 * v2) / c1;
+                document.getElementById('v1_res').innerText = v1.toFixed(2);
+                document.getElementById('dil_res').innerText = (v2 - v1 > 0) ? (v2 - v1).toFixed(2) : "0.00";
+            }
+        }
+
         function resetCounter() {
-            if(!confirm("Reset?")) return;
+            if(!confirm("Are you sure you want to clear all counts?")) return;
             wbcTotal = 0;
-            cellTypes.forEach(t => { counts[t] = 0; let el = document.getElementById('c-' + (t==='mye'?'my':t)); if(el) el.innerText = '0'; });
+            cellTypes.forEach(t => { 
+                counts[t] = 0; 
+                let el = document.getElementById('c-' + (t==='mye'?'my':t)); 
+                if(el) el.innerText = '0'; 
+            });
             document.getElementById('total').innerText = '0';
             document.getElementById('summary').innerHTML = '';
         }
