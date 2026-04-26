@@ -59,8 +59,8 @@
         .pos-blast { grid-area: 4 / 1 / 4 / span 2; } .pos-atyly { grid-area: 4 / 3; }
 
         /* Colors */
-        .c-mature { background: #5856d6; } .c-gran { background: #ff2d55; } .c-imm { background: #ff9500; } 
-        .c-blast { background: #af52de; } .c-other { background: #8e8e93; } .c-nr { background: #33e02d; }
+        .c-neu { background: #22e0f5; } .c-mon { background: #207327; } .c-imm { background: #0e1ab5; } .c-eos { background: #c24e00 }
+        .c-blast { background: #6e4a1d; } .c-other { background: #ff8c00; } .c-nr { background: #56de49;} .c-lym { background: #b019b5;} .c-bas { background: #6300ed;}
 
         /* Tab Bar */
         .tab-bar { position: fixed; bottom: 0; width: 100%; background: var(--card-bg); border-top: 1px solid var(--border); display: flex; justify-content: space-around; padding: 10px 0 25px; }
@@ -92,14 +92,14 @@
                 <button class="cell-btn shape-circle c-imm pos-pro" onclick="count('pro')">PRO<br><span id="c-pro">0</span></button>
                 <button class="cell-btn shape-tall c-nr pos-nrbc" onclick="count('nrb')">NRBC<br><span id="c-nrb">0</span></button>
 
-                <button class="cell-btn shape-circle c-gran pos-eos" onclick="count('eos')">EOS<br><span id="c-eos">0</span></button>
-                <button class="cell-btn shape-circle c-gran pos-bas" onclick="count('bas')">BAS<br><span id="c-bas">0</span></button>
+                <button class="cell-btn shape-circle c-eos pos-eos" onclick="count('eos')">EOS<br><span id="c-eos">0</span></button>
+                <button class="cell-btn shape-circle c-bas pos-bas" onclick="count('bas')">BAS<br><span id="c-bas">0</span></button>
                 <button class="cell-btn shape-circle c-imm pos-myelo" onclick="count('mye')">MYELO<br><span id="c-my">0</span></button>
                 
-                <button class="cell-btn shape-circle c-mature pos-mono" onclick="count('mon')">MONO<br><span id="c-mon">0</span></button>
-                <button class="cell-btn shape-circle c-mature pos-lym" onclick="count('lym')">LYM<br><span id="c-lym">0</span></button>
-                <button class="cell-btn shape-circle c-mature pos-neu" onclick="count('neu')">NEU<br><span id="c-neu">0</span></button>
-                <button class="cell-btn shape-tall c-gran pos-band" onclick="count('band')">BAND<br><span id="c-band">0</span></button>
+                <button class="cell-btn shape-circle c-mon pos-mono" onclick="count('mon')">MONO<br><span id="c-mon">0</span></button>
+                <button class="cell-btn shape-circle c-lym pos-lym" onclick="count('lym')">LYM<br><span id="c-lym">0</span></button>
+                <button class="cell-btn shape-circle c-neu pos-neu" onclick="count('neu')">NEU<br><span id="c-neu">0</span></button>
+                <button class="cell-btn shape-tall c-neu pos-band" onclick="count('band')">BAND<br><span id="c-band">0</span></button>
 
                 <button class="cell-btn shape-capsule c-blast pos-blast" onclick="count('bla')">BLAST<br><span id="c-bla">0</span></button>
                 <button class="cell-btn shape-circle c-other pos-atyly" onclick="count('aly')">A-LYM<br><span id="c-aly">0</span></button>
