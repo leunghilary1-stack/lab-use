@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>LabSuite Compact</title>
+    <title>Lab Gadgets</title>
     <style>
         :root { 
             --bg: #000000; --card-bg: #111; --text: #ffffff; --border: #333; --input-bg: #222;
@@ -62,6 +62,15 @@
         .c-neu { background: #22e0f5; } .c-mon { background: #207327; } .c-imm { background: #0e1ab5; } .c-eos { background: #c24e00 }
         .c-blast { background: #6e4a1d; } .c-other { background: #ff8c00; } .c-nr { background: #56de49;} .c-lym { background: #b019b5;} .c-bas { background: #6300ed;}
 
+        /* Timer Styling */
+        .timer-row { border-bottom: 1px solid #333; padding: 10px 0; }
+        .timer-row:last-child { border: none; }
+        .timer-controls { display: flex; gap: 8px; align-items: center; margin-top: 5px; }
+        .timer-name { font-weight: bold; border: none; padding: 5px; background: #222; width: 60%; color: white; }
+        .timer-display { font-family: monospace; font-size: 1.2em; font-weight: bold; min-width: 60px; color: var(--ios-green); }
+        .btn-start { background: var(--ios-green); color: white; border: none; border-radius: 5px; padding: 8px 12px; }
+        .btn-stop { background: var(--ios-red); color: white; border: none; border-radius: 5px; padding: 8px 12px; }
+        
         /* Tab Bar */
         .tab-bar { position: fixed; bottom: 0; width: 100%; background: var(--card-bg); border-top: 1px solid var(--border); display: flex; justify-content: space-around; padding: 10px 0 25px; }
         .tab-item { background: none; border: none; color: #8e8e93; font-size: 10px; display: flex; flex-direction: column; align-items: center; }
@@ -75,7 +84,7 @@
 <body class="dark-mode">
 
     <div class="header">
-        <h1 id="page-title">Cell Counter</h1>
+        <h1 id="page-title">Differential Counter</h1>
         <button class="theme-toggle" onclick="toggleTheme()">🌓 Theme</button>
     </div>
 
@@ -110,8 +119,29 @@
         </div>
     </div>
 
-    <div id="tab-dilution" class="tab-content"><div class="card"><h2>Dilution</h2><input type="number" id="c1" placeholder="C1" oninput="calc()"><input type="number" id="c2" placeholder="C2" oninput="calc()"><input type="number" id="v2" placeholder="V2" oninput="calc()"><div id="v1"></div></div></div>
-    <div id="tab-timers" class="tab-content"><div class="card"><h2>Timers</h2><div id="timer-container"></div></div></div>
+    <div id="tab-dilution" class="tab-content">
+        <div class="card">
+            <h2>Dilution Calculation</h2>
+            <label style="font-size: 0.8em; color: #666;">Stock Concentration (C1)</label>
+            <input type="number" id="c1" placeholder="C1" oninput="calc()">
+            <label style="font-size: 0.8em; color: #666;">Target Concentration (C2)</label>
+            <input type="number" id="c2" placeholder="C2" oninput="calc()">
+            <label style="font-size: 0.8em; color: #666;">Final Volume (V2)</label>
+            <input type="number" id="v2" placeholder="V2" oninput="calc()">
+            <div class="result-box">
+                Required Stock: <span id="v1" style="font-weight:bold;">0.00</span><br>
+                Diluent to add: <span id="diluent" style="font-weight:bold;">0.00</span>
+            </div>
+        </div>
+    </div>
+    
+    <div id="tab-timers" class="tab-content">
+        <div class="card">
+            <h2>Lab Timers</h2>
+            <div id="timer-container">
+                </div>
+        </div>
+    </div>
 
     <nav class="tab-bar">
         <button class="tab-item active" onclick="switchTab('counter', this)"><span class="tab-icon">🔬</span>Counter</button>
@@ -132,6 +162,51 @@
             document.getElementById('page-title').innerText = btn.innerText.replace('🔬','').replace('🧪','').replace('⏱️','');
         }
 
+// --- TIMER LOGIC ---
+        const timerContainer = document.getElementById('timer-container');
+        let timers = [null, null, null, null, null];
+        let timerIntervals = [null, null, null, null, null];
+
+        for (let i = 0; i < 5; i++) {
+            timerContainer.innerHTML += `
+                <div class="timer-row">
+                    <input type="text" class="timer-name" placeholder="Timer ${i+1} (e.g. Gram Stain)">
+                    <div class="timer-controls">
+                        <input type="number" id="time-input-${i}" placeholder="Sec" style="width: 70px; margin: 0;">
+                        <span class="timer-display" id="display-${i}">00:00</span>
+                        <button class="btn-start" onclick="startTimer(${i})">▶</button>
+                        <button class="btn-stop" onclick="stopTimer(${i})">⏹</button>
+                    </div>
+                </div>`;
+        }
+
+        function startTimer(i) {
+            if (timerIntervals[i]) return;
+            let seconds = parseInt(document.getElementById(`time-input-${i}`).value) || 0;
+            if (seconds <= 0) return;
+
+            timerIntervals[i] = setInterval(() => {
+                seconds--;
+                let m = Math.floor(seconds / 60);
+                let s = seconds % 60;
+                document.getElementById(`display-${i}`).innerText = `${m}:${s < 10 ? '0'+s : s}`;
+                
+                if (seconds <= 0) {
+                    clearInterval(timerIntervals[i]);
+                    timerIntervals[i] = null;
+                    alert(`Timer "${document.querySelectorAll('.timer-name')[i].value || 'Timer '+(i+1)}" finished!`);
+                    if (window.navigator.vibrate) window.navigator.vibrate([200, 100, 200]);
+                }
+            }, 1000);
+        }
+
+        function stopTimer(i) {
+            clearInterval(timerIntervals[i]);
+            timerIntervals[i] = null;
+            document.getElementById(`display-${i}`).innerText = "00:00";
+        }
+        
+// --- COUNTER & CALC LOGIC ---        
         const cellTypes = ['neu', 'lym', 'mon', 'eos', 'bas', 'aly', 'met', 'mye', 'pro', 'bla', 'oc', 'nrb', 'band'];
         let counts = {}; cellTypes.forEach(t => counts[t] = 0);
         let wbcTotal = 0; let goal = 100;
