@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>LabSuite Max (Custom Layout)</title>
+    <style>
+        :root { --ios-blue: #007aff; --ios-dark-bg: #000000; --ios-grey: #1c1c1e; --ios-red: #ff3b30; --ios-green: #34c759; }
+        body { font-family: -apple-system, sans-serif; background: var(--ios-dark-bg); color: white; margin: 0; padding: 0; padding-bottom: 90px; }
+        
+        .header { background: #111; padding: 20px 15px 10px; border-bottom: 1px solid #333; position: sticky; top: 0; z-index: 10; }
+        h1 { margin: 0; font-size: 1.3em; }
+
+        .tab-content { display: none; padding: 15px; }
+        .tab-content.active { display: block; }
+
+        .card { background: #111; padding: 15px; border-radius: 12px; margin-bottom: 15px; border: 1px solid #333; }
+        h2 { margin-top: 0; font-size: 1.0em; border-bottom: 1px solid #333; padding-bottom: 8px; color: #aaa; }
+        input { width: 100%; padding: 12px; margin: 8px 0; border: 1px solid #333; border-radius: 8px; font-size: 16px; box-sizing: border-box; background: #222; color: white; }
+        label { font-size: 0.8em; color: #aaa; }
+
+        /* --- THE NEW CUSTOM GRID LAYOUT --- */
+        .custom-grid { display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; /* 4 columns */ gap: 12px; }
+        
+        .cell-btn { padding: 10px 5px; border: none; font-weight: bold; color: white; font-size: 11px; text-transform: uppercase; text-align: center; display: flex; flex-direction: column; justify-content: center; align-items: center; /* Essential for mobile speed */ touch-action: manipulation; -webkit-user-select: none; -webkit-touch-callout: none; }
+        .cell-btn:active { opacity: 0.7; transform: scale(0.92); }
+
+        /* Shape and Position overrides */
+        .shape-circle { border-radius: 50%; aspect-ratio: 1 / 1; }
+        .shape-capsule { border-radius: 25px; grid-column: span 2; padding: 20px; }
+        .shape-tall { border-radius: 25px; grid-row: span 2; aspect-ratio: 0.5 / 1; font-size: 14px; } /* Tall and text slightly larger */
+        
+        /* Layout Ordering (Match the image_0.png) */
+        .pos-oc    { grid-column: 1; grid-row: 1; } .pos-meta  { grid-column: 2; grid-row: 1; } .pos-pro   { grid-column: 3; grid-row: 1; } .pos-nrbc  { grid-column: 4; grid-row: 1; }
+        .pos-eos   { grid-column: 1; grid-row: 2; } .pos-bas   { grid-column: 2; grid-row: 2; } .pos-myelo { grid-column: 3; grid-row: 2; } 
+        .pos-mono  { grid-column: 1; grid-row: 3; } .pos-lym   { grid-column: 2; grid-row: 3; } .pos-neu   { grid-column: 3; grid-row: 3; } .pos-band  { grid-column: 4; grid-row: 3; }
+        .pos-blast { grid-column: 1 / span 2; grid-row: 4; } .pos-atyly { grid-column: 3; grid-row: 4; }
+        
+        /* Color Coding (Matches original scientific groups) */
+        .c-mature { background: #5856d6; } /* Purple: Neut, Lym, Mon */
+        .c-gran   { background: #ff2d55; } /* Red/Pink: Eos, Baso, Band (New) */
+        .c-imm    { background: #ff9500; } /* Orange: Meta, Myelo, Pro */
+        .c-blast  { background: #af52de; } /* Violet: Blast */
+        .c-other  { background: #8e8e93; } /* Grey: OC, NRBC, AL */
+        
+        /* Timer Styling */
+        .timer-row { border-bottom: 1px solid #333; padding: 10px 0; }
+        .timer-row:last-child { border: none; }
+        .timer-controls { display: flex; gap: 8px; align-items: center; margin-top: 5px; }
+        .timer-name { font-weight: bold; border: none; padding: 5px; background: #222; width: 60%; color: white; }
+        .timer-display { font-family: monospace; font-size: 1.2em; font-weight: bold; min-width: 60px; color: var(--ios-green); }
+        .btn-start { background: var(--ios-green); color: white; border: none; border-radius: 5px; padding: 8px 12px; }
+        .btn-stop { background: var(--ios-red); color: white; border: none; border-radius: 5px; padding: 8px 12px; }
+
+        /* Tab Bar */
+        .tab-bar { position: fixed; bottom: 0; width: 100%; background: rgba(17,17,17,0.95); backdrop-filter: blur(10px); border-top: 1px solid #333; display: flex; justify-content: space-around; padding: 10px 0 25px; }
+        .tab-item { background: none; border: none; color: #8e8e93; font-size: 11px; display: flex; flex-direction: column; align-items: center; }
+        .tab-item.active { color: var(--ios-blue); }
+        .tab-icon { font-size: 24px; margin-bottom: 4px; }
+
+        .result-box { background: #001a35; padding: 12px; border-radius: 10px; margin-top: 10px; font-size: 0.9em; border: 1px solid #004a8f; }
+        .summary { font-size: 0.8em; margin-top: 15px; column-count: 2; line-height: 1.6; }
+        .counter-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 15px; padding-bottom: 10px; border-bottom: 1px solid #333; }
+        .btn-black { width:100%; background:#000; color:white; border:1px solid #333; padding:12px; border-radius:8px; margin-top:15px; font-size: 12px;}
+    </style>
+</head>
+<body>
+
+    <div class="header">
+        <h1 id="page-title">Cell Counter</h1>
+    </div>
+
+    <div id="tab-counter" class="tab-content active">
+        <div class="card">
+            <div class="counter-header">
+                <span>Goal: <input type="number" id="goal" value="100" style="width: 50px; background:transparent; border:none; margin:0;" oninput="updateGoal()"></span>
+                <div style="font-weight: 800; font-size: 1.1em;">WBC: <span id="total">0</span>/<span id="currentGoal">100</span></div>
+            </div>
+            
+            <div class="custom-grid">
+                <button class="cell-btn shape-circle c-other pos-oc" onclick="count('oc')">OC<br><span id="c-oc">0</span></button>
+                <button class="cell-btn shape-circle c-imm pos-meta" onclick="count('met')">META<br><span id="c-met">0</span></button>
+                <button class="cell-btn shape-circle c-imm pos-pro" onclick="count('pro')">PRO<br><span id="c-pro">0</span></button>
+                <button class="cell-btn shape-tall c-other pos-nrbc" onclick="count('nrb')">NRBC<br><span id="c-nrb">0</span></button> <button class="cell-btn shape-circle c-gran pos-eos" onclick="count('eos')">EOS<br><span id="c-eos">0</span></button>
+                <button class="cell-btn shape-circle c-gran pos-bas" onclick="count('bas')">BAS<br><span id="c-bas">0</span></button>
+                <button class="cell-btn shape-circle c-imm pos-myelo" onclick="count('mye')">MYELO<br><span id="c-mye">0</span></button>
+                
+                <button class="cell-btn shape-circle c-mature pos-mono" onclick="count('mon')">MONO<br><span id="c-mon">0</span></button>
+                <button class="cell-btn shape-circle c-mature pos-lym" onclick="count('lym')">LYM<br><span id="c-lym">0</span></button>
+                <button class="cell-btn shape-circle c-mature pos-neu" onclick="count('neu')">NEU<br><span id="c-neu">0</span></button>
+                <button class="cell-btn shape-tall c-gran pos-band" onclick="count('band')">BAND<br><span id="c-band">0</span></button> <button class="cell-btn shape-capsule c-blast pos-blast" onclick="count('bla')">BLAST<br><span id="c-bla">0</span></button>
+                <button class="cell-btn shape-circle c-other pos-atyly" onclick="count('aly')">A-LYM<br><span id="c-aly">0</span></button>
+            </div>
+            
+            <button onclick="resetCounter()" class="btn-black">Reset Counts</button>
+            <div class="summary" id="summary"></div>
+        </div>
+    </div>
+
+    <div id="tab-dilution" class="tab-content">
+        <div class="card">
+            <h2>Dilution ($C_1V_1 = C_2V_2$)</h2>
+            <label>Stock Conc (C1)</label>
+            <input type="number" id="c1" placeholder="e.g. 100" oninput="calc()">
+            <label>Target Conc (C2)</label>
+            <input type="number" id="c2" placeholder="e.g. 10" oninput="calc()">
+            <label>Final Volume (V2)</label>
+            <input type="number" id="v2" placeholder="e.g. 500" oninput="calc()">
+            <div class="result-box">
+                Required Stock: <span id="v1" style="font-weight:bold; color:var(--ios-blue);">0.00</span><br>
+                Diluent to add: <span id="diluent" style="font-weight:bold; color:var(--ios-blue);">0.00</span>
+            </div>
+        </div>
+    </div>
+
+    <div id="tab-timers" class="tab-content">
+        <div class="card">
+            <h2>Lab Timers</h2>
+            <div id="timer-container">
+                </div>
+        </div>
+    </div>
+
+    <nav class="tab-bar">
+        <button class="tab-item active" onclick="switchTab('counter', this)">
+            <span class="tab-icon">🔬</span><span>Counter</span>
+        </button>
+        <button class="tab-item" onclick="switchTab('dilution', this)">
+            <span class="tab-icon">🧪</span><span>Dilution</span>
+        </button>
+        <button class="tab-item" onclick="switchTab('timers', this)">
+            <span class="tab-icon">⏱️</span><span>Timers</span>
+        </button>
+    </nav>
+
+    <script>
+        // --- TAB LOGIC ---
+        function switchTab(tabId, btn) {
+            document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+            document.querySelectorAll('.tab-item').forEach(b => b.classList.remove('active'));
+            document.getElementById('tab-' + tabId).classList.add('active');
+            btn.classList.add('active');
+            document.getElementById('page-title').innerText = btn.innerText;
+        }
+
+        // --- TIMER LOGIC ---
+        const timerContainer = document.getElementById('timer-container');
+        let timerIntervals = [null, null, null, null, null];
+        for (let i = 0; i < 5; i++) {
+            timerContainer.innerHTML += `
+                <div class="timer-row">
+                    <input type="text" class="timer-name" placeholder="Timer ${i+1} (e.g. Gram Stain)">
+                    <div class="timer-controls">
+                        <input type="number" id="time-input-${i}" placeholder="Sec" style="width: 70px; margin: 0;">
+                        <span class="timer-display" id="display-${i}">00:00</span>
+                        <button class="btn-start" onclick="startTimer(${i})">▶</button>
+                        <button class="btn-stop" onclick="stopTimer(${i})">⏹</button>
+                    </div>
+                </div>`;
+        }
+        function startTimer(i) {
+            if (timerIntervals[i]) return;
+            if (window.navigator.vibrate) window.navigator.vibrate(30);
+            let seconds = parseInt(document.getElementById(`time-input-${i}`).value) || 0;
+            if (seconds <= 0) return;
+            timerIntervals[i] = setInterval(() => {
+                seconds--;
+                let m = Math.floor(seconds / 60); let s = seconds % 60;
+                document.getElementById(`display-${i}`).innerText = `${m}:${s < 10 ? '0'+s : s}`;
+                if (seconds <= 0) {
+                    clearInterval(timerIntervals[i]);
+                    timerIntervals[i] = null;
+                    alert(`Timer "${document.querySelectorAll('.timer-name')[i].value || 'Timer '+(i+1)}" finished!`);
+                    if (window.navigator.vibrate) window.navigator.vibrate([200, 100, 200]);
+                }
+            }, 1000);
+        }
+        function stopTimer(i) {
+            if (window.navigator.vibrate) window.navigator.vibrate(30);
+            clearInterval(timerIntervals[i]); timerIntervals[i] = null;
+            document.getElementById(`display-${i}`).innerText = "00:00";
+        }
+
+        // --- COUNTER & CALC LOGIC ---
+        const cellTypes = ['neu', 'lym', 'mon', 'eos', 'bas', 'aly', 'met', 'mye', 'pro', 'bla', 'oc', 'nrb', 'band'];
+        let counts = {}; cellTypes.forEach(t => counts[t] = 0);
+        let wbcTotal = 0; let goal = 100;
+
+        function calc() {
+            const c1 = parseFloat(document.getElementById('c1').value) || 0;
+            const c2 = parseFloat(document.getElementById('c2').value) || 0;
+            const v2 = parseFloat(document.getElementById('v2').value) || 0;
+            if (c1 > 0) {
+                const v1 = (c2 * v2) / c1;
+                document.getElementById('v1').innerText = v1.toFixed(2);
+                document.getElementById('diluent').innerText = (v2 - v1 > 0) ? (v2 - v1).toFixed(2) : "0.00";
+            }
+        }
+
+        function count(type) {
+            if (window.navigator.vibrate) window.navigator.vibrate(50);
+            counts[type]++;
+            // Only non-NRBC cells increment the WBC total. Band form IS a WBC.
+            if (type !== 'nrb') {
+                wbcTotal++;
+                document.getElementById('total').innerText = wbcTotal;
+                if (wbcTotal == goal) {
+                    if (window.navigator.vibrate) window.navigator.vibrate([100, 50, 100]);
+                    alert("WBC Goal reached!");
+                }
+            }
+            document.getElementById('c-' + type).innerText = counts[type];
+            updateSummary();
+        }
+
+        function updateSummary() {
+            let html = "";
+            cellTypes.forEach(t => {
+                if (counts[t] > 0 && t !== 'nrb') {
+                    let pct = ((counts[t] / wbcTotal) * 100).toFixed(1);
+                    html += `<div>${t.toUpperCase()}: ${pct}%</div>`;
+                }
+            });
+            if (counts['nrb'] > 0) html += `<div style="color:var(--ios-green); font-weight:bold; grid-column:span 2; border-top:1px solid #333; padding-top:5px; margin-top:5px;">NRBC: ${counts['nrb']} per ${wbcTotal} WBC</div>`;
+            document.getElementById('summary').innerHTML = html;
+        }
+
+        function resetCounter() {
+            if(!confirm("Reset counts?")) return;
+            wbcTotal = 0;
+            cellTypes.forEach(t => { counts[t] = 0; document.getElementById('c-' + t).innerText = '0'; });
+            document.getElementById('total').innerText = '0';
+            document.getElementById('summary').innerHTML = '';
+        }
+
+        function updateGoal() {
+            goal = parseInt(document.getElementById('goal').value) || 1;
+            document.getElementById('currentGoal').innerText = goal;
+        }
+    </script>
+</body>
+</html>
